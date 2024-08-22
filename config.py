@@ -3,11 +3,10 @@ import sys
 import pathlib
 from dotenv import dotenv_values
 
-# Define paths to look for .env file
+# Paths to look for .env file
 cwd_path = os.path.join(os.getcwd(), '.env')
 global_path = os.path.join(pathlib.Path.home(), '.config/yourappname/.env')
 
-# Load environment variables from the .env file
 values = {}
 
 if os.path.exists(cwd_path):
@@ -17,7 +16,7 @@ elif os.path.exists(global_path):
 else:
     values = dotenv_values()
 
-# Functions to get configuration values
+# Get config values
 def get(val, default=None):
     return os.environ.get(val, values.get(val, default))
 
@@ -41,13 +40,12 @@ def get_number(name, default):
 def get_bool(name, default):
     return str(get(name, default) or '').lower() in ('true', '1')
 
-# Required configuration
+# req config params
 TCONNECT_EMAIL = get('TCONNECT_EMAIL', 'email@example.com')
 TCONNECT_PASSWORD = get('TCONNECT_PASSWORD', 'password')
 
-# Optional configuration
+# Optional configs
 AUTOUPDATE_DEFAULT_SLEEP_SECONDS = get_number('AUTOUPDATE_DEFAULT_SLEEP_SECONDS', '300')  # 5 minutes
 AUTOUPDATE_MAX_SLEEP_SECONDS = get_number('AUTOUPDATE_MAX_SLEEP_SECONDS', '1500')  # 25 minutes
 AUTOUPDATE_USE_FIXED_SLEEP = get_bool('AUTOUPDATE_USE_FIXED_SLEEP', 'false')
 
-# Add other configurations as needed
