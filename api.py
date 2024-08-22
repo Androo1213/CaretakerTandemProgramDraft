@@ -25,42 +25,35 @@ class TConnectApi:
     def login(self):
         logger.info("Logging in to TConnect API...")
         try:
+            # Get session cookies and form data from login page
             initial_response = self.session.get(LOGIN_URL)
             initial_response.raise_for_status()
 
+            # Parse the login page
             soup = BeautifulSoup(initial_response.content, 'html.parser')
             login_data = self._build_login_data(soup)
 
-            login_response = self.session.post(LOGIN_URL, data=login_data, headers={'Referer': LOGIN_URL},
-                                               allow_redirects=False)
+            # Perform login
+            login_response = self.session.post(LOGIN_URL, data=login_data, headers={'Referer': LOGIN_URL})
             login_response.raise_for_status()
 
-            if 'UserGUID' in self.session.cookies and 'accessToken' in self.session.cookies:
-                self.userGuid = self.session.cookies['UserGUID']
-                self.accessToken = self.session.cookies['accessToken']
-                self.accessTokenExpiresAt = self.session.cookies['accessTokenExpiresAt']
+            # Check if login was successful by inspecting the response
+            if "Welcome" in login_response.text:
+                self.userGuid = self.session.cookies.get('UserGUID')
+                self.accessToken = self.session.cookies.get('accessToken')
+                self.accessTokenExpiresAt = self.session.cookies.get('accessTokenExpiresAt')
                 logger.info(f"Logged in successfully. Access token expires at {self.accessTokenExpiresAt}")
-                return True
             else:
-                logger.error("Login failed, missing session cookies.")
-                return False
+                logger.error("Login failed, could not find the expected welcome message.")
+                logger.debug(f"Login Response: {login_response.text}")
+                raise HTTPError("Login failed.")
 
         except HTTPError as e:
             logger.error(f"HTTP error occurred during login: {e}")
-            return False
+            raise
         except Exception as e:
             logger.error(f"An error occurred during login: {e}")
-            return False
-
-    def _build_login_data(self, soup):
-        return {
-            "__VIEWSTATE": soup.select_one("#__VIEWSTATE")["value"],
-            "__VIEWSTATEGENERATOR": soup.select_one("#__VIEWSTATEGENERATOR")["value"],
-            "__EVENTVALIDATION": soup.select_one("#__EVENTVALIDATION")["value"],
-            "ctl00$ContentBody$LoginControl$txtLoginEmailAddress": self.email,
-            "ctl00$ContentBody$LoginControl$txtLoginPassword": self.password,
-            "__EVENTTARGET": "ctl00$ContentBody$LoginControl$linkLogin",
-        }
+            raise
 
     def api_headers(self):
         if not self.accessToken:
@@ -103,3 +96,26 @@ class TConnectApi:
             'userGuid': self.userGuid,
         }
         return self.get(endpoint, params)
+
+    def _build_login_data(self, soup):
+        return {
+            "__VIEWSTATE": soup.select_one("#__VIEWSTATE")["value"],
+            "__VIEWSTATEGENERATOR": soup.select_one("#__VIEWSTATEGENERATOR")["value"],
+            "__EVENTVALIDATION": soup.select_one("#__EVENTVALIDATION")["value"],
+            "ctl00$ContentBody$LoginControl$txtLoginEmailAddress": self.email,
+            "ctl00$ContentBody$LoginControl$txtLoginPassword": self.password,
+            "__EVENTTARGET": "ctl00$ContentBody$LoginControl$linkLogin",
+        }
+
+    def _build_login_data(self, soup):
+        return {
+            "__VIEWSTATE": soup.select_one("#__VIEWSTATE")["value"],
+            "__VIEWSTATEGENERATOR": soup.select_one("#__VIEWSTATEGENERATOR")["value"],
+            "__EVENTVALIDATION": soup.select_one("#__EVENTVALIDATION")["value"],
+            "ctl00$ContentBody$LoginControl$txtLoginEmailAddress": self.email,
+            "ctl00$ContentBody$LoginControl$txtLoginPassword": self.password,
+            "__EVENTTARGET": "ctl00$ContentBody$LoginControl$linkLogin",
+            "__EVENTARGUMENT": "",
+            "__LASTFOCUS": "",
+        }
+

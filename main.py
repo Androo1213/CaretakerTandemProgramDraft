@@ -7,9 +7,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
-    email = input("Please enter your t:connect email: ")
-    password = input("Please enter your t:connect password: ")
-
     print("Welcome to the Caretaker Tandem Program!")
     print("Please choose the type of data you want to retrieve:")
     print("1. Bolus History")
@@ -22,10 +19,14 @@ def main():
         print("Invalid choice. Please enter 1, 2, or 3.")
         sys.exit(1)
 
-    tconnect_api = TConnectApi(email, password)
+    email = input("Please enter your t:connect email: ")
+    password = input("Please enter your t:connect password: ")
 
-    if not tconnect_api.logged_in:
-        logger.error("Failed to authenticate with t:connect")
+    try:
+        tconnect_api = TConnectApi(email, password)
+        logger.info(f"Logged in successfully. Access token: {tconnect_api.accessToken}")
+    except Exception as e:
+        logger.error(f"Failed to authenticate with t:connect: {e}")
         sys.exit(1)
 
     if choice == '1':
@@ -56,3 +57,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
