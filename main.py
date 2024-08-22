@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    print("Welcome to the Caretaker Tandem Program!")
+    print("Booting up the Caretaker Tandem Program!")
 
     email = input("Please enter t:connect email: ")
     password = input("Please enter t:connect password: ")
