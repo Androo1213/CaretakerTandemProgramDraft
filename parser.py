@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def parse_bolus_history(data):
     """
-    Parses bolus data from the API response and returns a list of formatted entries.
+    Parses bolus data from api response
     """
     try:
         parsed_data = []
@@ -27,7 +27,9 @@ def parse_bolus_history(data):
 
 def parse_iob_data(data):
     """
-    Parses IOB data from the API response and returns a list of formatted entries.
+    Parses iob data from api response
+    :param data:
+    :return:
     """
     try:
         parsed_data = []
@@ -57,7 +59,7 @@ def format_bolus_history(bolus_history):
 
 def format_iob_data(iob_data):
     """
-    Formats parsed IOB data into a readable string.
+    formats parsed IOB data into a more readable str
     """
     formatted_data = "IOB Data:\n"
     for entry in iob_data:
@@ -68,16 +70,13 @@ def format_iob_data(iob_data):
 # Filtering and Processing Functions
 
 def filter_data_by_date(data, start_date, end_date):
-    """
-    Filters data based on a date range.
-    """
     start = arrow.get(start_date)
     end = arrow.get(end_date)
     return [entry for entry in data if start <= arrow.get(entry['timestamp']) <= end]
 
 def convert_units(value, from_unit, to_unit):
     """
-    Converts units, e.g., mg/dL to mmol/L.
+    unit conversion
     """
     conversions = {
         ('mg/dL', 'mmol/L'): 0.0555,
@@ -91,7 +90,7 @@ def convert_units(value, from_unit, to_unit):
 
 def process_bolus_history(data, start_date=None, end_date=None):
     """
-    Processes and formats bolus history data, with optional date filtering.
+    processes bolus history data
     """
     parsed_data = parse_bolus_history(data)
     if start_date and end_date:
@@ -100,7 +99,7 @@ def process_bolus_history(data, start_date=None, end_date=None):
 
 def process_iob_data(data, start_date=None, end_date=None):
     """
-    Processes and formats IOB data, with optional date filtering.
+    process iob data, can filter by date if needed
     """
     parsed_data = parse_iob_data(data)
     if start_date and end_date:

@@ -13,8 +13,7 @@ def setup_logging(level=logging.INFO):
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 def format_timestamp(timestamp):
-    """
-    Converts a timestamp to a human-readable format.
+    """ makes timestamp readable
     """
     try:
         return arrow.get(timestamp).format('YYYY-MM-DD HH:mm:ss')
@@ -24,10 +23,7 @@ def format_timestamp(timestamp):
 
 def validate_required_fields(data, required_fields):
     """
-    Ensures that all required fields are present in the data.
-    :param data: Dictionary containing the data.
-    :param required_fields: List of required field names.
-    :return: True if all fields are present, False otherwise.
+    returns bool regarding if all data fields that are required are filled
     """
     missing_fields = [field for field in required_fields if field not in data]
     if missing_fields:
@@ -37,9 +33,7 @@ def validate_required_fields(data, required_fields):
 
 def parse_date(date_string):
     """
-    Parses a date string into a datetime object.
-    :param date_string: Date string to parse.
-    :return: datetime object or None if parsing fails.
+    makes date string into date obj
     """
     try:
         return arrow.get(date_string).datetime
@@ -49,10 +43,7 @@ def parse_date(date_string):
 
 def cap_length(text, maxlen):
     """
-    Truncates a string to a maximum length, adding ellipsis if necessary.
-    :param text: The string to truncate.
-    :param maxlen: Maximum length of the string.
-    :return: Truncated string.
+    perhaps will need to truncate text later
     """
     if not text or len(text) <= maxlen:
         return text

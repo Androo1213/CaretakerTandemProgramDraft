@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 def main():
     print("Welcome to the Caretaker Tandem Program!")
 
-    email = input("Please enter your t:connect email: ")
-    password = input("Please enter your t:connect password: ")
+    email = input("Please enter t:connect email: ")
+    password = input("Please enter t:connect password: ")
 
     tconnect_api = TConnectApi(email, password)
 
@@ -39,10 +39,10 @@ def main():
             sys.exit(1)
 
     elif choice == '3':
-        print("Exiting the program. Goodbye!")
+        print("Exiting program!")
         sys.exit(0)
     else:
-        print("Invalid choice. Please enter 1, 2, or 3.")
+        print("Error, Please enter 1, 2, or 3.")
         sys.exit(1)
 
 
