@@ -31,23 +31,26 @@ class TConnectApi:
             soup = BeautifulSoup(initial_response.content, 'html.parser')
             login_data = self._build_login_data(soup)
 
-            login_response = self.session.post(LOGIN_URL, data=login_data, headers={'Referer': LOGIN_URL})
+            login_response = self.session.post(LOGIN_URL, data=login_data, headers={'Referer': LOGIN_URL},
+                                               allow_redirects=False)
             login_response.raise_for_status()
 
-            if login_response.status_code == 302:
-                self.userGuid = self.session.cookies.get('UserGUID')
-                self.accessToken = self.session.cookies.get('accessToken')
-                self.accessTokenExpiresAt = self.session.cookies.get('accessTokenExpiresAt')
+            if 'UserGUID' in self.session.cookies and 'accessToken' in self.session.cookies:
+                self.userGuid = self.session.cookies['UserGUID']
+                self.accessToken = self.session.cookies['accessToken']
+                self.accessTokenExpiresAt = self.session.cookies['accessTokenExpiresAt']
                 logger.info(f"Logged in successfully. Access token expires at {self.accessTokenExpiresAt}")
+                return True
             else:
-                raise HTTPError(f"Login failed with status code {login_response.status_code}")
+                logger.error("Login failed, missing session cookies.")
+                return False
 
         except HTTPError as e:
             logger.error(f"HTTP error occurred during login: {e}")
-            raise
+            return False
         except Exception as e:
             logger.error(f"An error occurred during login: {e}")
-            raise
+            return False
 
     def _build_login_data(self, soup):
         return {
