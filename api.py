@@ -43,6 +43,9 @@ class TConnectApi:
                 self.accessToken = self.session.cookies.get('accessToken')
                 self.accessTokenExpiresAt = self.session.cookies.get('accessTokenExpiresAt')
                 logger.info(f"Logged in successfully. Access token expires at {self.accessTokenExpiresAt}")
+                logger.info(f"Session cookies: {self.session.cookies.get_dict()}")
+                cookiesTest = self.session.cookies.get_dict()
+                print(cookiesTest)
             else:
                 logger.error("Login failed, could not find the expected welcome message.")
                 logger.debug(f"Login Response: {login_response.text}")
@@ -58,22 +61,28 @@ class TConnectApi:
     def api_headers(self):
         if not self.accessToken:
             raise ValueError("No access token available")
-        return {
+        headers = {
             'Authorization': f'Bearer {self.accessToken}',
             'Origin': 'https://tconnect.tandemdiabetes.com',
             'Referer': 'https://tconnect.tandemdiabetes.com/',
         }
+        logger.info(f"Authorization Headers: {headers}")
+        return headers
 
     def get(self, endpoint, params=None):
         url = BASE_URL + endpoint
         headers = self.api_headers()
 
+        logger.info(f"Making GET request to {url} with headers: {headers}")
+        cookies_test2 = self.session.cookies.get_dict()
+        print(cookies_test2)
         try:
             response = self.session.get(url, headers=headers, params=params)
             response.raise_for_status()
             return response.json()
         except HTTPError as e:
             logger.error(f"HTTP error during GET {url}: {e}")
+            logger.error(f"Response content: {response.content}")
             raise
         except Exception as e:
             logger.error(f"An error occurred during GET {url}: {e}")

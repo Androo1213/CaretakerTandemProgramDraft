@@ -10,8 +10,9 @@ logger = logging.getLogger(__name__)
 def main():
     print("Booting up the Caretaker Tandem Program!")
 
-    email = input("Please enter t:connect email: ")
-    password = input("Please enter t:connect password: ")
+    email = "veronicaschoenen@gmail.com"
+    password = "GooeyMax2017!"
+    print("email and password hardcoded in and being sent over next line")
 
     tconnect_api = TConnectApi(email, password)
 
@@ -23,8 +24,8 @@ def main():
     choice = input("Enter your choice (1/2/3): ")
 
     if choice == '1' or choice == '2':
-        start_date = input("Enter start date (YYYY-MM-DD): ")
-        end_date = input("Enter end date (YYYY-MM-DD): ")
+        start_date = "2028-08-23"
+        end_date = "2028-08-24"
         try:
             if choice == '1':
                 bolus_history = tconnect_api.get_bolus_history(start_date, end_date)
@@ -48,4 +49,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
